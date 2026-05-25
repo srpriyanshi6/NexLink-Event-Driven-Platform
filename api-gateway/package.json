@@ -1,0 +1,19 @@
+{
+  "name": "@nexlink/api-gateway",
+  "version": "1.0.0",
+  "description": "API Gateway for routing and authentication",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "http-proxy-middleware": "^2.0.6",
+    "express-rate-limit": "^6.7.0",
+    "helmet": "^7.0.0",
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^9.0.0",
+    "dotenv": "^16.0.3"
+  }
+}
