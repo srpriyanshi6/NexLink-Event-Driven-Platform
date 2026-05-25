@@ -1,0 +1,22 @@
+{
+  "name": "@nexlink/user-service",
+  "version": "1.0.0",
+  "description": "User management and authentication microservice",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.5.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.0",
+    "kafkajs": "^2.2.4",
+    "dotenv": "^16.0.3",
+    "validator": "^13.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
