@@ -1,12 +1,17 @@
 {
-  "name": "@nexlink/user-service",
+  "name": "nexlink-user-service",
   "version": "1.0.0",
-  "description": "User management and authentication microservice",
+  "description": "User management and authentication microservice with JWT and Kafka events",
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
-    "dev": "nodemon src/app.js"
+    "dev": "nodemon src/app.js",
+    "test": "jest",
+    "health": "curl http://localhost:3001/health"
   },
+  "keywords": ["user-service", "authentication", "jwt", "kafka"],
+  "author": "Priyanshi Sablok",
+  "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",
     "mongoose": "^7.5.0",
@@ -14,9 +19,12 @@
     "jsonwebtoken": "^9.0.0",
     "kafkajs": "^2.2.4",
     "dotenv": "^16.0.3",
-    "validator": "^13.11.0"
+    "validator": "^13.11.0",
+    "cors": "^2.8.5",
+    "helmet": "^7.0.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.1",
+    "jest": "^29.6.4"
   }
 }
