@@ -26,8 +26,8 @@ app.use(cors({
 }));
 
 // Body parsing
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
 
 // Request logging
 app.use(requestLogger);
