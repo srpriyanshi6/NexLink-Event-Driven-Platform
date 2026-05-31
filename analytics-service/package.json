@@ -1,0 +1,26 @@
+{
+  "name": "nexlink-analytics-service",
+  "version": "1.0.0",
+  "description": "Analytics and metrics aggregation microservice",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "health": "curl http://localhost:3004/health"
+  },
+  "keywords": ["analytics", "metrics", "kafka", "aggregation"],
+  "author": "Priyanshi Sablok",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.5.0",
+    "kafkajs": "^2.2.4",
+    "dotenv": "^16.0.3",
+    "cors": "^2.8.5",
+    "helmet": "^7.0.0",
+    "moment": "^2.29.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
