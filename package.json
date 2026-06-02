@@ -1,5 +1,34 @@
 {
-  "dependencies": {
+  "name": "nexlink-platform",
+  "version": "1.0.0",
+  "description": "NexLink Event-Driven Platform - Integration Tests & Deployment Scripts",
+  "private": true,
+  "scripts": {
+    "test:integration": "node tests/integration/workflow.test.js",
+    "test:load": "k6 run tests/load/load-test.js",
+    "test:all": "npm run test:integration && npm run test:load",
+    "test:services": "bash scripts/health-check.sh",
+    "deploy:railway": "bash scripts/deploy-railway.sh",
+    "deploy:render": "bash scripts/deploy-render.sh",
+    "start:all": "bash scripts/start-all.sh",
+    "stop:all": "bash scripts/stop-all.sh",
+    "health": "bash scripts/health-check.sh"
+  },
+  "devDependencies": {
+    "axios": "^1.5.0",
     "mongoose": "^9.6.3"
-  }
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "keywords": [
+    "microservices",
+    "kafka",
+    "graphql",
+    "event-driven",
+    "distributed-systems"
+  ],
+  "author": "Priyanshi Sablok",
+  "license": "MIT"
 }
