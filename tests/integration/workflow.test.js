@@ -119,7 +119,16 @@ async function runIntegrationTests() {
       {
         order: 3,
         type: 'webhook',
-        config: { url: 'https://webhook.site/#!/test', method: 'POST' }
+        config: { 
+          //analytics service endpoint instead of invalid webhook.site URL
+          url: `${config.analyticsService}/api/analytics/track`,
+          method: 'POST',
+          data: {
+            eventType: 'workflow_test',
+            workflowName: 'Integration Test Workflow',
+            timestamp: new Date().toISOString()
+          }
+        }
       }
     ]
   };
@@ -189,7 +198,7 @@ async function runIntegrationTests() {
   console.log('');
 
   //Test 7: Trigger Workflow
-  console.log('⚡ Test 7: Trigger Workflow');
+  console.log('Test 7: Trigger Workflow');
   try {
     const response = await axios.post(`${config.apiGateway}/api/workflows/${workflowId}/trigger`, {}, {
       headers: { Authorization: `Bearer ${authToken}` }
@@ -325,7 +334,7 @@ async function runIntegrationTests() {
   console.log('');
 
   //Test 12: Mark Notification as Read
-  console.log('✓ Test 12: Mark Notification as Read');
+  console.log('Test 12: Mark Notification as Read');
   try {
     //first get notifications to find one to mark as read
     const notificationsRes = await axios.get(`${config.apiGateway}/api/notifications`, {
