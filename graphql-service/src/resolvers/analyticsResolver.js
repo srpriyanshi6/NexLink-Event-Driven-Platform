@@ -6,7 +6,13 @@ const analyticsResolver = {
       const response = await axios.get(`${process.env.ANALYTICS_SERVICE_URL}/analytics/system`, {
         params: { days }
       });
-      return response.data.data;
+      const metrics = response.data.data;
+
+      return {
+        totalUsers: metrics.summary?.totalUsers || 0,
+        totalWorkflows: metrics.summary?.totalWorkflows || 0,
+        completionRate: metrics.performance?.completionRate || 0
+      };
     },
     
     getWorkflowStats: async (_, { userId, days = 30 }) => {
