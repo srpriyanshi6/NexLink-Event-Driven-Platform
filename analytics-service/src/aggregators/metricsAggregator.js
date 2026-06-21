@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const { AnalyticsEvent, DailyMetrics } = require('../models/Analytics');
 const moment = require('moment');
 
@@ -131,44 +132,83 @@ class MetricsAggregator {
   }
 
   //get analytics for a user
-  async getUserAnalytics(userId, days = 30) {
-    const startDate = moment().subtract(days, 'days').startOf('day');
-    
-    const [workflows, events, activity] = await Promise.all([
-      AnalyticsEvent.aggregate([
-        { $match: { userId: mongoose.Types.ObjectId(userId), eventType: /WORKFLOW/ } },
-        { $group: { _id: '$eventType', count: { $sum: 1 } } }
-      ]),
-      AnalyticsEvent.countDocuments({ 
-        userId: mongoose.Types.ObjectId(userId),
-        timestamp: { $gte: startDate.toDate() }
-      }),
-      AnalyticsEvent.aggregate([
-        { $match: { userId: mongoose.Types.ObjectId(userId) } },
-        { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$timestamp' } }, count: { $sum: 1 } } },
-        { $sort: { _id: 1 } },
-        { $limit: 30 }
-      ])
-    ]);
-    
-    const workflowStats = {};
-    workflows.forEach(w => { workflowStats[w._id] = w.count; });
-    
-    return {
-      user: { id: userId },
-      period: { days, startDate: startDate.toISOString() },
-      workflows: {
-        total: workflowStats.WORKFLOW_CREATED || 0,
-        completed: workflowStats.WORKFLOW_COMPLETED || 0,
-        failed: workflowStats.WORKFLOW_FAILED || 0,
-        completionRate: ((workflowStats.WORKFLOW_COMPLETED || 0) / (workflowStats.WORKFLOW_CREATED || 1)) * 100
+async getUserAnalytics(userId, days = 30) {
+  const startDate = moment().subtract(days, 'days').startOf('day');
+
+  const objectId = new mongoose.Types.ObjectId(userId);
+
+  const [workflows, events, activity] = await Promise.all([
+    AnalyticsEvent.aggregate([
+      {
+        $match: {
+          userId: objectId,
+          eventType: /WORKFLOW/
+        }
       },
-      activity: {
-        totalEvents: events,
-        dailyBreakdown: activity.map(a => ({ date: a._id, events: a.count }))
+      {
+        $group: {
+          _id: '$eventType',
+          count: { $sum: 1 }
+        }
       }
-    };
-  }
+    ]),
+
+    AnalyticsEvent.countDocuments({
+      userId: objectId,
+      timestamp: { $gte: startDate.toDate() }
+    }),
+
+    AnalyticsEvent.aggregate([
+      {
+        $match: {
+          userId: objectId
+        }
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: {
+              format: '%Y-%m-%d',
+              date: '$timestamp'
+            }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } },
+      { $limit: 30 }
+    ])
+  ]);
+
+  const workflowStats = {};
+  workflows.forEach(w => {
+    workflowStats[w._id] = w.count;
+  });
+
+  return {
+    user: { id: userId },
+    period: {
+      days,
+      startDate: startDate.toISOString()
+    },
+    workflows: {
+      total: workflowStats.WORKFLOW_CREATED || 0,
+      completed: workflowStats.WORKFLOW_COMPLETED || 0,
+      failed: workflowStats.WORKFLOW_FAILED || 0,
+      completionRate:
+        ((workflowStats.WORKFLOW_COMPLETED || 0) /
+          (workflowStats.WORKFLOW_CREATED || 1)) *
+        100
+    },
+    activity: {
+      totalEvents: events,
+      dailyBreakdown: activity.map(a => ({
+        date: a._id,
+        events: a.count
+      }))
+    }
+  };
+}
 
   //get system-wide metrics
   async getSystemMetrics(days = 7) {

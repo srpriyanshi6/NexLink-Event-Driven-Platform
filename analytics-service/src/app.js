@@ -38,7 +38,7 @@ app.get('/health', (req, res) => {
 });
 
 //get user analytics
-app.get('/api/analytics/users/:userId', async (req, res) => {
+app.get('/analytics/users/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
     const { days = 30 } = req.query;
@@ -56,7 +56,7 @@ app.get('/api/analytics/users/:userId', async (req, res) => {
 });
 
 //get system metrics
-app.get('/api/analytics/system', async (req, res) => {
+app.get('/analytics/system', async (req, res) => {
   try {
     const { days = 7 } = req.query;
     
@@ -73,7 +73,7 @@ app.get('/api/analytics/system', async (req, res) => {
 });
 
 //get real time dashboard
-app.get('/api/analytics/dashboard', async (req, res) => {
+app.get('/analytics/dashboard', async (req, res) => {
   try {
     const [realtime, system] = await Promise.all([
       metricsAggregator.getRealtimeMetrics(),
@@ -95,7 +95,7 @@ app.get('/api/analytics/dashboard', async (req, res) => {
 });
 
 //get workflow analytics
-app.get('/api/analytics/workflows/:workflowId', async (req, res) => {
+app.get('/analytics/workflows/:workflowId', async (req, res) => {
   try {
     const { workflowId } = req.params;
     
@@ -124,7 +124,7 @@ app.get('/api/analytics/workflows/:workflowId', async (req, res) => {
 });
 
 //track custom event
-app.post('/api/analytics/track', async (req, res) => {
+app.post('/analytics/track', async (req, res) => {
   try {
     const { eventType, userId, workflowId, data } = req.body;
     
@@ -150,7 +150,7 @@ app.post('/api/analytics/track', async (req, res) => {
 });
 
 //get event logs
-app.get('/api/analytics/events', async (req, res) => {
+app.get('/analytics/events', async (req, res) => {
   try {
     const { eventType, userId, limit = 100, offset = 0 } = req.query;
     const query = {};
@@ -191,12 +191,12 @@ async function start() {
     console.log(`Analytics Service running on port ${PORT}`);
     console.log(`Health check: http://localhost:${PORT}/health`);
     console.log(`Endpoints:`);
-    console.log(`   GET    /api/analytics/users/:userId    - User analytics`);
-    console.log(`   GET    /api/analytics/system           - System metrics`);
-    console.log(`   GET    /api/analytics/dashboard        - Real-time dashboard`);
-    console.log(`   GET    /api/analytics/workflows/:id    - Workflow analytics`);
-    console.log(`   POST   /api/analytics/track            - Track custom event`);
-    console.log(`   GET    /api/analytics/events           - Event logs`);
+    console.log(`   GET    /analytics/users/:userId    - User analytics`);
+    console.log(`   GET    /analytics/system           - System metrics`);
+    console.log(`   GET    /analytics/dashboard        - Real-time dashboard`);
+    console.log(`   GET    /analytics/workflows/:id    - Workflow analytics`);
+    console.log(`   POST   /analytics/track            - Track custom event`);
+    console.log(`   GET    /analytics/events           - Event logs`);
   });
 }
 
