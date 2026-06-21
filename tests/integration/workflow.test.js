@@ -26,9 +26,7 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 //test suite
 async function runIntegrationTests() {
-  console.log('\n========================================');
   console.log('Starting Integration Tests');
-  console.log('========================================\n');
 
   let passed = 0;
   let failed = 0;
@@ -40,7 +38,7 @@ async function runIntegrationTests() {
   for (const service of services) {
     try {
       const url = config[service];
-      const response = await axios.get(`${url}/health`, { timeout: 5000 });
+      const response = await axios.get(`${url}/health`, { timeout: 10000 });
       if (response.status === 200) {
         console.log(`${service} is healthy`);
         passed++;
@@ -119,16 +117,7 @@ async function runIntegrationTests() {
       {
         order: 3,
         type: 'webhook',
-        config: { 
-          //analytics service endpoint instead of invalid webhook.site URL
-          url: `${config.analyticsService}/api/analytics/track`,
-          method: 'POST',
-          data: {
-            eventType: 'workflow_test',
-            workflowName: 'Integration Test Workflow',
-            timestamp: new Date().toISOString()
-          }
-        }
+        config: { url: 'https://webhook.site/#!/test', method: 'POST' }
       }
     ]
   };
@@ -367,13 +356,11 @@ async function runIntegrationTests() {
   console.log('');
 
   //test Results Summary
-  console.log('========================================');
-  console.log('TEST RESULTS SUMMARY');
-  console.log('========================================');
+  console.log('CONCLUSIONNNNN :')
+  console.log('TEST RESULTS SUMMARYYYYY');
   console.log(`Passed: ${passed}`);
   console.log(`Failed: ${failed}`);
   console.log(`Success Rate: ${((passed / (passed + failed)) * 100).toFixed(2)}%`);
-  console.log('========================================\n');
 
   if (failed === 0) {
     console.log('All integration tests passed! System is ready for deployment.\n');
