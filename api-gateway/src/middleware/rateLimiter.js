@@ -27,7 +27,7 @@ const authLimiter = rateLimit({
     code: 'AUTH_RATE_LIMIT_EXCEEDED',
     retryAfter: '1 hour'
   },
-  skipSuccessfulRequests: true, // Don't count successful requests
+  skipSuccessfulRequests: true,
   keyGenerator: (req) => req.ip
 });
 

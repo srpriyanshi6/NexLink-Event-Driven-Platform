@@ -16,13 +16,13 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Connection
+//MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
-.then(() => console.log('✅ Workflow Service - MongoDB connected'))
-.catch(err => console.error('❌ MongoDB error:', err));
+.then(() => console.log('Workflow Service MongoDB connected'))
+.catch(err => console.error('MongoDB error:', err));
 
 // Kafka setup
 const kafka = new Kafka({
@@ -35,14 +35,14 @@ let producer;
 async function initKafka() {
   producer = kafka.producer();
   await producer.connect();
-  console.log('✅ Kafka producer connected');
+  console.log('Kafka producer connected');
 }
 
-// Initialize workflow engine
+//initialize workflow engine
 const workflowEngine = new WorkflowEngine(producer);
 const workflowConsumer = new WorkflowConsumer(workflowEngine);
 
-// Health check
+//health check
 app.get('/health', (req, res) => {
   res.json({
     service: 'workflow-service',
@@ -52,7 +52,7 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Create workflow
+//create workflow
 app.post('/workflows', async (req, res) => {
   try {
     const { name, description, steps, priority, tags } = req.body;
@@ -81,7 +81,7 @@ app.post('/workflows', async (req, res) => {
     
     await workflow.save();
     
-    // Emit workflow created event
+    //emit workflow created event
     await producer.send({
       topic: 'workflow-events',
       messages: [{
@@ -106,7 +106,7 @@ app.post('/workflows', async (req, res) => {
   }
 });
 
-// Get workflows
+//get workflows
 app.get('/workflows', async (req, res) => {
   try {
     const { userId, status, priority, page = 1, limit = 10 } = req.query;
@@ -140,7 +140,7 @@ app.get('/workflows', async (req, res) => {
   }
 });
 
-// Get single workflow
+//get single workflow
 app.get('/workflows/:id', async (req, res) => {
   try {
     const workflow = await Workflow.findById(req.params.id);
@@ -158,7 +158,7 @@ app.get('/workflows/:id', async (req, res) => {
   }
 });
 
-// Update workflow
+//update workflow
 app.put('/workflows/:id', async (req, res) => {
   try {
     const workflow = await Workflow.findByIdAndUpdate(
@@ -180,7 +180,7 @@ app.put('/workflows/:id', async (req, res) => {
   }
 });
 
-// Trigger workflow
+//trigger workflow
 app.post('/workflows/:id/trigger', async (req, res) => {
   try {
     const workflowId = req.params.id;
@@ -194,19 +194,19 @@ app.post('/workflows/:id/trigger', async (req, res) => {
       return res.status(400).json({ error: 'Workflow is not active' });
     }
     
-    // Emit trigger event
+    //emit trigger event
     await producer.send({
       topic: 'workflow-events',
       messages: [{
         value: JSON.stringify({
           type: 'WORKFLOW_TRIGGERED',
           workflowId,
+          // userId: workflow.createdBy,
           timestamp: new Date().toISOString()
         })
       }]
     });
-    
-    // Execute asynchronously
+
     workflowEngine.executeWorkflow(workflowId).catch(error => {
       console.error(`Workflow ${workflowId} execution failed:`, error);
     });
@@ -221,7 +221,7 @@ app.post('/workflows/:id/trigger', async (req, res) => {
   }
 });
 
-// Delete workflow
+//delete workflow
 app.delete('/workflows/:id', async (req, res) => {
   try {
     const workflow = await Workflow.findByIdAndDelete(req.params.id);
@@ -239,7 +239,6 @@ app.delete('/workflows/:id', async (req, res) => {
   }
 });
 
-// Start service
 const PORT = process.env.PORT || 3002;
 
 async function start() {
@@ -247,9 +246,9 @@ async function start() {
   await workflowConsumer.connect();
   
   app.listen(PORT, () => {
-    console.log(`🚀 Workflow Service running on port ${PORT}`);
-    console.log(`📊 Health check: http://localhost:${PORT}/health`);
-    console.log(`📡 Endpoints:`);
+    console.log(`Workflow Service running on port ${PORT}`);
+    console.log(`Health check: http://localhost:${PORT}/health`);
+    console.log(`Endpoints:`);
     console.log(`   POST   /workflows              - Create workflow`);
     console.log(`   GET    /workflows              - List workflows`);
     console.log(`   GET    /workflows/:id          - Get workflow`);

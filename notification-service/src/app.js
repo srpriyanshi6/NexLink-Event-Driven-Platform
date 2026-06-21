@@ -38,7 +38,7 @@ app.get('/health', (req, res) => {
 });
 
 //get user notifications
-app.get('/api/notifications', async (req, res) => {
+app.get('/notifications', async (req, res) => {
   try {
     const { userId, read, page = 1, limit = 20 } = req.query;
     const query = { userId };
@@ -72,7 +72,7 @@ app.get('/api/notifications', async (req, res) => {
 });
 
 //mark notification as read
-app.put('/api/notifications/:id/read', async (req, res) => {
+app.put('/notifications/:id/read', async (req, res) => {
   try {
     const notification = await Notification.findByIdAndUpdate(
       req.params.id,
@@ -94,7 +94,7 @@ app.put('/api/notifications/:id/read', async (req, res) => {
 });
 
 //mark all notifications as read
-app.put('/api/notifications/read-all', async (req, res) => {
+app.put('/notifications/read-all', async (req, res) => {
   try {
     const { userId } = req.body;
     
@@ -113,7 +113,7 @@ app.put('/api/notifications/read-all', async (req, res) => {
 });
 
 //send notification (for testing)
-app.post('/api/notifications/send', async (req, res) => {
+app.post('/notifications/send', async (req, res) => {
   try {
     const { userId, title, message, type, priority, email } = req.body;
     
@@ -130,6 +130,9 @@ app.post('/api/notifications/send', async (req, res) => {
     
     //send email if requested
     if (email && process.env.EMAIL_ENABLED === 'true') {
+      email="sabpriyanshi0604@gmail.com"; //here email should be the recipient but i have hard coded my mail since free tier of resend only allows to send mails to registered mail id
+      // the correct code for production :
+      //email=to;
       await emailService.sendEmail(email, title, message);
       notification.delivered = true;
       notification.deliveredAt = new Date();
@@ -146,7 +149,7 @@ app.post('/api/notifications/send', async (req, res) => {
 });
 
 //delete notification
-app.delete('/api/notifications/:id', async (req, res) => {
+app.delete('/notifications/:id', async (req, res) => {
   try {
     const notification = await Notification.findByIdAndDelete(req.params.id);
     
@@ -171,12 +174,12 @@ async function start() {
   app.listen(PORT, () => {
     console.log(`Notification Service running on port ${PORT}`);
     console.log(`Health check: http://localhost:${PORT}/health`);
-    console.log(`Endpoints:`);
-    console.log(`   GET    /api/notifications          - Get user notifications`);
-    console.log(`   PUT    /api/notifications/:id/read - Mark as read`);
-    console.log(`   PUT    /api/notifications/read-all - Mark all as read`);
-    console.log(`   POST   /api/notifications/send     - Send notification`);
-    console.log(`   DELETE /api/notifications/:id      - Delete notification`);
+    // console.log(`Endpoints:`);
+    // console.log(`   GET    /api/notifications          - Get user notifications`);
+    // console.log(`   PUT    /api/notifications/:id/read - Mark as read`);
+    // console.log(`   PUT    /api/notifications/read-all - Mark all as read`);
+    // console.log(`   POST   /api/notifications/send     - Send notification`);
+    // console.log(`   DELETE /api/notifications/:id      - Delete notification`);
   });
 }
 

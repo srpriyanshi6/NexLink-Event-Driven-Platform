@@ -2,9 +2,9 @@ const { Kafka } = require('kafkajs');
 const Workflow = require('../models/Workflow');
 const WorkflowEngine = require('../services/workflowEngine');
 
-/**
- * Kafka Consumer for Workflow Service
- * Listens to user and workflow events
+/*
+ Kafka Consumer for Workflow Service
+ Listens to user and workflow events
  */
 class WorkflowConsumer {
   constructor(workflowEngine) {
@@ -17,9 +17,7 @@ class WorkflowConsumer {
     this.workflowEngine = workflowEngine;
   }
 
-  /**
-   * Connect and start consuming events
-   */
+  //connect and startt consuming events
   async connect() {
     this.consumer = this.kafka.consumer({ 
       groupId: 'workflow-service-group',
@@ -28,26 +26,23 @@ class WorkflowConsumer {
     });
     
     await this.consumer.connect();
-    console.log('✅ Kafka consumer connected for Workflow Service');
+    console.log('YAYY Kafka consumer connected for Workflow Service');
     
-    // Subscribe to topics
     await this.consumer.subscribe({ topic: 'user-events', fromBeginning: false });
     await this.consumer.subscribe({ topic: 'workflow-events', fromBeginning: false });
     
-    // Start consuming
+    //start consuming
     await this.consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
         const event = JSON.parse(message.value.toString());
-        console.log(`📨 Workflow Service received: ${event.type} from ${topic}`);
+        console.log(`YAYY Workflow Service received: ${event.type} from ${topic}`);
         
         await this.handleEvent(event);
       }
     });
   }
 
-  /**
-   * Handle incoming events
-   */
+  //handle incoming events
   async handleEvent(event) {
     try {
       switch (event.type) {
@@ -71,9 +66,8 @@ class WorkflowConsumer {
     }
   }
 
-  /**
-   * Create onboarding workflow for new users
-   */
+  //create onboarding workflow for new users
+   
   async createOnboardingWorkflow(event) {
     try {
       const workflow = new Workflow({
@@ -119,9 +113,9 @@ class WorkflowConsumer {
       });
       
       await workflow.save();
-      console.log(`✅ Onboarding workflow created for user ${event.userId}`);
+      console.log(`YAYY Onboarding workflow created for user ${event.userId}`);
       
-      // Trigger the workflow
+      //trigger workflow
       await this.workflowEngine.executeWorkflow(workflow._id);
       
     } catch (error) {
@@ -129,9 +123,8 @@ class WorkflowConsumer {
     }
   }
 
-  /**
-   * Disconnect consumer
-   */
+  //disconnect consumer
+   
   async disconnect() {
     if (this.consumer) {
       await this.consumer.disconnect();
